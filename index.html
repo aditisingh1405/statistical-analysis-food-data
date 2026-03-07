@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Data Analytics Dashboard</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --accent: #3498db;
+            --bg: #f4f7f6;
+            --white: #ffffff;
+            --text-main: #444444;
+            --text-muted: #7f8c8d;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            margin: 0;
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--white);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+
+        h1 { border-bottom: 2px solid #eee; padding-bottom: 15px; font-weight: 300; margin-bottom: 30px; font-size: 2.2rem; color: var(--primary); }
+        h2 { font-size: 1.5rem; color: var(--primary); margin-top: 50px; margin-bottom: 15px; border-left: 5px solid var(--accent); padding-left: 15px; font-weight: 600; }
+        h3 { font-size: 1.15rem; color: var(--primary); margin-top: 25px; margin-bottom: 10px; font-weight: 600; }
+        
+        .note-box { padding: 20px; margin: 20px 0; border-radius: 8px; }
+        .cleaning-note { background-color: #eef6fc; border: 1px solid #d6eaf8; }
+        .interpretation-note { background-color: #f9f9f9; border: 1px solid #eee; }
+        
+        .note-box label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: var(--accent);
+            font-weight: 800;
+        }
+
+        .table-wrapper { overflow-x: auto; margin: 20px 0; border: 1px solid #eee; border-radius: 8px; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; white-space: nowrap; }
+        th { background-color: #fafafa; color: var(--text-muted); font-weight: 600; text-align: right; padding: 12px 15px; border-bottom: 2px solid #eee; }
+        td { padding: 12px 15px; border-bottom: 1px solid #f1f1f1; text-align: right; }
+        .text-left { text-align: left; }
+        
+        .badge { padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; }
+        .true { background: #ffdada; color: #cf2a2a; }
+        .false { background: #d4f8e6; color: #1a7c4a; }
+
+        .visual-container { text-align: center; margin: 15px 0 40px 0; padding: 10px; background: #fff; border: 1px solid #eee; border-radius: 8px; }
+        .visual-container img { max-width: 100%; height: auto; border-radius: 4px; display: block; margin: 0 auto; }
+
+        .results-table { width: auto; min-width: 300px; margin: 20px 0; border: 1px solid #eee; }
+        .results-table td { text-align: left; padding: 8px 15px; background: #fff; border-bottom: 1px solid #eee; }
+        .results-table td:first-child { font-weight: 600; color: var(--primary); }
+        
+        /* Special class for math symbols */
+        .math-symbol { font-style: italic; font-family: "Times New Roman", serif; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Recipe Content & Ratings Analysis</h1>
+
+    <h2>Step 1: Data Cleaning and Exploratory Data Analysis</h2>
+    <div class="note-box cleaning-note">
+        <label>Data Cleaning</label>
+        <p>We merged the recipe and interaction data to associate ratings with nutritional content. Ratings of 0 were replaced with NaN because they represent missing interactions. The 'nutrition' string was parsed into numeric columns for analysis.</p>
+    </div>
+
+    <h3>Full Dataset View</h3>
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th></th><th class="text-left">name</th><th>id</th><th>minutes</th><th>contributor_id</th><th>submitted</th><th>n_steps</th><th>n_ingredients</th><th>average_rating</th><th>calories</th><th>total_fat</th><th>sugar</th><th>sodium</th><th>protein</th><th>saturated_fat</th><th>carbohydrates</th><th>is_high_sugar</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>0</td><td class="text-left">1 brownies in the world best ever</td><td>333281</td><td>40</td><td>985201</td><td>2008-10-27</td><td>10</td><td>9</td><td>4.0</td><td>138.4</td><td>10.0</td><td>50.0</td><td>3.0</td><td>3.0</td><td>19.0</td><td>6.0</td><td><span class="badge true">True</span></td></tr>
+                <tr><td>1</td><td class="text-left">1 in canada chocolate chip cookies</td><td>453467</td><td>45</td><td>1848091</td><td>2011-04-11</td><td>12</td><td>11</td><td>5.0</td><td>595.1</td><td>46.0</td><td>211.0</td><td>22.0</td><td>13.0</td><td>51.0</td><td>26.0</td><td><span class="badge true">True</span></td></tr>
+                <tr><td>2</td><td class="text-left">412 broccoli casserole</td><td>306168</td><td>40</td><td>50969</td><td>2008-05-30</td><td>6</td><td>9</td><td>5.0</td><td>194.8</td><td>20.0</td><td>6.0</td><td>32.0</td><td>22.0</td><td>36.0</td><td>3.0</td><td><span class="badge false">False</span></td></tr>
+                <tr><td>3</td><td class="text-left">millionaire pound cake</td><td>286009</td><td>120</td><td>461724</td><td>2008-02-12</td><td>7</td><td>7</td><td>5.0</td><td>878.3</td><td>63.0</td><td>326.0</td><td>13.0</td><td>20.0</td><td>123.0</td><td>39.0</td><td><span class="badge true">True</span></td></tr>
+                <tr><td>4</td><td class="text-left">2000 meatloaf</td><td>475785</td><td>90</td><td>2202916</td><td>2012-03-06</td><td>17</td><td>13</td><td>5.0</td><td>267.0</td><td>30.0</td><td>12.0</td><td>12.0</td><td>29.0</td><td>48.0</td><td>2.0</td><td><span class="badge false">False</span></td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h2>Step 2: Fundamental Data Visualization</h2>
+    
+    <div class="note-box interpretation-note">
+        <label>Univariate Interpretation</label>
+        <p>"The distribution of average ratings is heavily skewed toward 5.0. Most recipes fall under 500 calories."</p>
+    </div>
+    <div class="visual-container"><img src="image_0.jpeg" alt="Univariate Analysis"></div>
+
+    <div class="note-box interpretation-note">
+        <label>Bivariate Interpretation</label>
+        <p>"Simpler recipes are more common, but median ratings remain stable across complexity."</p>
+    </div>
+    <div class="visual-container"><img src="image_1.jpeg" alt="Bivariate Analysis"></div>
+
+    <div class="note-box interpretation-note">
+        <label>Aggregate Significance</label>
+        <p>"High-sugar recipes tend to have slightly higher ratings and significantly higher calories."</p>
+    </div>
+    <div class="visual-container"><img src="image_2.jpeg" alt="Aggregate Significance"></div>
+
+    <h2>Step 3: Assessment of Missingness</h2>
+    <p>We analyze patterns of missing data to determine if missingness is related to other variables.</p>
+    
+    
+
+    <h3>1. MNAR Analysis</h3>
+    <p>The <strong>'rating'</strong> column is likely <strong>MNAR (Missing Not At Random)</strong> because neutral experiences often lead to skipped ratings.</p>
+    
+    <h3>2. Missingness Dependency</h3>
+    <p>We tested if 'description' missingness depends on 'minutes'.</p>
+
+    <p><strong>Hypotheses:</strong></p>
+    <ul>
+        <li><strong>Null Hypothesis (<span class="math-symbol">H<sub>0</sub></span>):</strong> Missingness of description is independent of preparation time.</li>
+        <li><strong>Alternative Hypothesis (<span class="math-symbol">H<sub>1</sub></span>):</strong> Missingness of description depends on preparation time.</li>
+    </ul>
+
+    <table class="results-table">
+        <tr><td>Observed Difference</td><td>[Insert Value] minutes</td></tr>
+        <tr><td>P-value</td><td>0.592</td></tr>
+    </table>
+    <div class="visual-container"><img src="image_3.jpeg" alt="Missingness Permutation Test"></div>
+    <p><strong>Conclusion:</strong> With a p-value of 0.592, we <strong>fail to reject <span class="math-symbol">H<sub>0</sub></span></strong>. Missingness appears to be <strong>MCAR</strong>.</p>
+
+    <h2>Step 4: Hypothesis Testing</h2>
+    <p>Formal test to determine if sugar levels significantly impact ratings.</p>
+
+    <h3>1. The Setup</h3>
+    <ul>
+        <li><strong>Null Hypothesis (<span class="math-symbol">H<sub>0</sub></span>):</strong> Mean average rating for high-sugar and low-sugar recipes is the same.</li>
+        <li><strong>Alternative Hypothesis (<span class="math-symbol">H<sub>1</sub></span>):</strong> Mean average rating for high-sugar recipes is different from low-sugar recipes.</li>
+        <li><strong>Test Statistic:</strong> Difference in Means.</li>
+        <li><strong>Significance Level (<span class="math-symbol">&alpha;</span>):</strong> 0.05.</li>
+    </ul>
+
+    
+
+    <h3>2. Results and Interpretation</h3>
+    <table class="results-table">
+        <tr><td>Observed Difference</td><td>0.0050</td></tr>
+        <tr><td>P-value</td><td>0.1210</td></tr>
+    </table>
+    <p>Since our p-value (<strong>0.1210</strong>) is greater than <span class="math-symbol">&alpha;</span> = 0.05, we <strong>fail to reject the null hypothesis</strong>.</p>
+
+    <div class="visual-container">
+        <img src="image_4.jpeg" alt="Sugar/Rating Permutation Test Results">
+    </div>
+
+    <h3>3. Conclusion</h3>
+    <p>We do not have sufficient evidence to say that sugar content significantly impacts the average rating. This implies that health-conscious options are not perceived as less "tasty" in terms of star ratings.</p>
+
+</div>
+</body>
+</html>
